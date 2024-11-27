@@ -1,27 +1,29 @@
 from django.shortcuts import render, redirect
-from django.contrib.auth import authenticate, login, logout
-from django.contrib.auth.forms import AuthenticationForm
+from django.contrib.auth import authenticate, login
 from .forms import RegistrationForm
+from django.contrib.auth.forms import AuthenticationForm
+
 def Login_view(request):
     if request.method == "POST":
         form = AuthenticationForm(data=request.POST)
         if form.is_valid():
-            user = form.get_user()
-            login(request, user)
-            
-            # Check if the user is an admin or staff and redirect accordingly
-            if user.is_staff:
-                if user.is_superuser:  # Checking if the user is admin (superuser)
-                    return redirect('admin_dashboard')  # Redirect to admin dashboard
-                else:
-                    return redirect('staff_dashboard')  # Redirect to staff dashboard
-            else:
-                return redirect('user_dashboard')  # Redirect to regular user dashboard
-            
-    else:
-        form = AuthenticationForm()
 
-    return render(request, 'login.html', {'form': form})
+            user = form.get_user()
+
+            if user.is_admin:
+                
+                return redirect('admin_dashboard')
+            else:
+                
+                return redirect('user_dashboard')
+        else:
+           
+            return render(request, 'login.html', {'form': form})
+    else:
+
+        form = AuthenticationForm()
+        return render(request, 'login.html', {'form': form})
+
 
 def register(request):
     if request.method == "POST": 
@@ -40,6 +42,11 @@ def register(request):
 def logout_view(request):
     logout(request)
     return redirect('login')
+
+def lobby(request):
+    return render(request, 'lobby.html')
+
+
 
 from django.contrib.auth.decorators import login_required
 from .models import Item

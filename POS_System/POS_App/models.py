@@ -1,4 +1,6 @@
 from django.db import models
+from django.forms import PasswordInput
+
 
 class Item(models.Model):
     class Color(models.TextChoices):
@@ -26,3 +28,12 @@ class Item(models.Model):
 
     def __str__(self):
         return self.Item_name
+
+
+class User(models.Model):
+    username = models.CharField(max_length=255, unique=True)
+    password = models.CharField(max_length=255) 
+    is_admin = models.BooleanField(default=False)  
+
+    def __str__(self):
+        return self.username

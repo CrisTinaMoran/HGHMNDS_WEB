@@ -2,7 +2,7 @@ from django.urls import path, include
 from .import views
 
 urlpatterns = [
-    path('', include('POS_System.urls')),
+    path('', views.lobby, name='lobby'),
     path('register/', views.register, name='register'),
     path('login/', views.Login_view, name='login'),
     path('logout/', views.logout_view, name='login'),
