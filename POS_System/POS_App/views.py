@@ -3,7 +3,7 @@ from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.forms import AuthenticationForm
 from .forms import RegistrationForm
-from .models import Item
+from .models import Item, User
 
 def Login_view(request):
     if request.method == "POST":
@@ -11,10 +11,10 @@ def Login_view(request):
         if form.is_valid():
             user = form.get_user()
             login(request, user)  # Log the user in
-            if user.is_superuser:
+            if user.is_admin:
                 return redirect('admin_dashboard')
-            elif user.is_staff:
-                return redirect('staff_dashboard')
+            elif user.is_seller:
+                return redirect('seller_dashboard')
             else:
                 return redirect('user_dashboard')
     else:
@@ -48,17 +48,23 @@ def lobby(request):
 
 @login_required
 def dashboard(request):
-    if request.user.is_superuser:
+    if request.user.is_admin:
         return redirect('admin_dashboard')
-    elif request.user.is_staff:
-        return redirect('staff_dashboard')
+    elif request.user.is_seller:
+        return redirect('seller_dashboard')
     else:
         return redirect('user_dashboard')
 
 
 def admin_dashboard(request):
-    return render(request, 'admin_dashboard.html')
+    items = Item.objects.all()
+    user = User.objects.all()
+    return render(request, 'admin_dashboard.html', {'items': items}, {'User': User})
 
 
-def staff_dashboard(request):
-    return render(request, 'staff_dashboard.html')
+def seller_dashboard(request):
+    items = Item.objects.all()
+    return render(request, 'seller_dashboard.html', {'items': items})
+
+def user_dashboard(request):
+    return render(request, 'user_dashboard.html')
