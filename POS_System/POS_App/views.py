@@ -2,6 +2,8 @@ from django.shortcuts import render, redirect
 from django.contrib.auth import authenticate, login
 from .forms import RegistrationForm
 from django.contrib.auth.forms import AuthenticationForm
+from django.contrib.auth.decorators import login_required
+from .models import User
 
 def Login_view(request):
     if request.method == "POST":
@@ -40,7 +42,7 @@ def register(request):
         return render(request, 'register.html', {'form': form})
 
 def logout_view(request):
-    logout(request)
+    logout(request, 'login')
     return redirect('login')
 
 def lobby(request):
@@ -48,16 +50,32 @@ def lobby(request):
 
 
 
-from django.contrib.auth.decorators import login_required
 from .models import Item
+from django.shortcuts import redirect
+from django.contrib.auth.decorators import login_required
+
+
 
 @login_required
-def dashboard(request):
-    if request.user.is_superuser:
-        Item = Item.objects.all()
+def dashboard_redirect(request):
+    # Check the user's role and redirect accordingly
+    if request.user.role == User.Role.ADMIN:
         return redirect('admin_dashboard')
-    elif request.user.is_staff:
-        return redirect('staff_dashboard')
+    elif request.user.role == User.Role.SELLER:
+        return redirect('seller_dashboard')
+    elif request.user.role == User.Role.USER:
+        return redirect('user_dashboard')
     else:
-        return redirect('user_dashboard') 
+        # Handle unexpected roles or errors
+        return redirect('error_page')
+
+def admin_dashboard(request):
+    return render(request, 'admin_dashboard.html')
+
+def user_dashboard(request):
+    return render(request, 'user_dashboard.html')
+
+def seller_dashboard(request):
+    return render(request, 'seller_dashboard.html')
+
 

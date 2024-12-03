@@ -31,9 +31,19 @@ class Item(models.Model):
 
 
 class User(models.Model):
+    class Role(models.TextChoices):
+        USER = 'user', 'User'
+        SELLER = 'seller', 'Seller'
+        ADMIN = 'admin', 'Admin'
+
     username = models.CharField(max_length=255, unique=True)
-    password = models.CharField(max_length=255) 
-    is_admin = models.BooleanField(default=False)  
+    password = models.CharField(max_length=255)
+    role = models.CharField(
+        max_length=10,
+        choices=Role.choices,
+        default=Role.USER
+    )
 
     def __str__(self):
-        return self.username
+        return f"{self.username} ({self.get_role_display()})"
+
