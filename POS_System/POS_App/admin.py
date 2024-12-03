@@ -7,6 +7,4 @@ admin.site.register(Item)
 class UserAdmin(admin.ModelAdmin):
     list_display = ('username', 'role') 
     list_filter = ('role',)             
-    search_fields = ('username',)       
-
-# Register your models here.
+    search_fields = ('username',)

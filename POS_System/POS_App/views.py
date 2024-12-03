@@ -1,5 +1,5 @@
 from django.shortcuts import render, redirect
-from django.contrib.auth import authenticate, login
+from django.contrib.auth import authenticate, login, logout
 from .forms import RegistrationForm
 from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth.decorators import login_required
@@ -42,7 +42,7 @@ def register(request):
         return render(request, 'register.html', {'form': form})
 
 def logout_view(request):
-    logout(request, 'login')
+    logout(request)
     return redirect('login')
 
 def lobby(request):
